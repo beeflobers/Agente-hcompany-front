@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Agente H.Company</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-chat: #1a1f2e;
+            --accent-primary: #ffb800;
+            --accent-secondary: #ffd666;
+            --user-msg: #1e293b;
+            --ai-msg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glow: rgba(255, 184, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 50%, #0a0e1a 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            
+        }
+
+        /* Efeito de partículas animadas no fundo */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 184, 0, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        /* HEADER */
+        .header {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px; /* Reduzi um pouco o padrão */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0; /* Não deixa o header esmagar */
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+           
+            
+        }
+
+        .logo-text .company {
+            color: var(--accent-primary);
+            font-weight: 600;
+            
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            height: calc(100vh - 60px);
+            margin: 0 auto;
+            padding: 20px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            justify-content: center;
+            position: relative;
+        }
+
+        .chat-area {
+           display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            max-height: 0;
+           opacity: 0;
+            transition: all 0.5 ease;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-primary) transparent;
+            margin-bottom: 10px;
+            min-height: 0;
+        
+           
+            
+            
+        }
+        
+        .chat-area::-webkit-scrollbar { width: 6px; }
+        .chat-area::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 10px;
+        }
+
+        /* MENSAGENS */
+        .message-row {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+            justify-content: center;
+            
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-row.user { flex-direction: row-reverse; }
+
+        .avatar {
+            width: 36px; 
+            height: 36px;
+            border-radius: 12px;
+            display: none; 
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .avatar.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .avatar.ai {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #0a0e1a;
+        }
+
+        .message-content {
+            flex: 1;
+            max-width: 85%; /* Aumentei para caber mais texto */
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .sender-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .timestamp {
+            font-size: 10px;
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .bubble {
+            padding: 14px 18px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 15px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            text-align: center;
+        }
+
+        .bubble.user {
+            background: var(--user-msg);
+            color: white;
+            border: 1px solid var(--border-color);
+            border-top-right-radius: 2px;
+        }
+
+        .bubble.ai {
+            background: var(--ai-msg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-top-left-radius: 2px;
+        }
+
+        /* ÁREA DE INPUT */
+        .input-container {
+            background: rgba(17, 24, 39, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.5 ease;
+            flex-shrink: 0;
+            
+        }
+
+        .input-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+           
+           
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+           
+        }
+
+
+        input {
+            width: 100%;
+            background: var(--bg-chat);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 16px; 
+            padding: 12px 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(255, 184, 0, 0.1);
+        }
+
+        input::placeholder { color: var(--text-secondary); }
+
+        button {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #0a0e1a;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px var(--glow);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px var(--glow);
+        }
+        
+        button svg { pointer-events: none; }
+        button:active { transform: translateY(0); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* LOADING */
+        .loading-dots { display: flex; gap: 5px; align-items: center; }
+        .dot {
+            width: 6px; height: 6px; background: var(--accent-primary);
+            border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        
+        .suggestions { 
+            display: flex;
+            justify-content: center;
+            gap: 8px; 
+            padding-bottom: 10px; 
+            flex-wrap: nowrap; 
+            overflow-x: auto; /* Permite rolar para o lado no celular */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Esconde barra de rolagem */
+        }
+        .suggestions::-webkit-scrollbar { display: none; }
+
+        .suggestion-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 18px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: whitesmoke;
+            white-space: nowrap; /* Não quebra linha */
+            flex-shrink: 0;
+        }
+        .suggestion-chip:hover {
+            background: var(255, 184, 0, 0.1);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .chat-area {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            transition: all 0.5s ease;
+            opacity: 0;
+            flex: 0;
+            pointer-events: none;
+        }
+    
+        
+        .footer-text {
+            text-align: center;
+            font-size: 10px;
+            color: var(--accent-primary);
+            margin-top: 8px;
+            margin-bottom: 2px;
+        }
+        
+
+        .app.landing .chat-area{
+            display: none;
+            opacity: 0;
+        }
+
+         .app.chat .chat-area{
+           display: flex;
+           flex: 1; 
+           opacity: 1;
+           max-height: 100%;
+           margin-bottom: 20px;
+         }
+
+       
+        .app.chat .main-container {
+         justify-content: flex-start;
+         padding-top: 20px; 
+         height: calc(100vh - 70px);
+        }
+
+      
+      .app.landing .main-container {
+        justify-content: flex-start;
+        padding-top: 25vh;
+        height: calc(100vh - 70px);
+      }
+
+       
+        @media (max-width: 600px) {
+            .header { 
+                padding: 10px 15px; 
+            }
+            .logo-text { font-size: 18px; }
+            
+            .main-container { 
+                padding: 5px 10px 10px 10px; 
+            }
+            
+            .chat-area { 
+                padding: 5px;
+            }
+            
+            .message-content { max-width: 90%; } 
+            
+            .bubble {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .avatar { width: 32px; height: 32px; font-size: 13px; }
+            
+            .input-container { padding: 8px; border-radius: 16px; }
+            input { padding: 10px 14px; }
+        }
+    </style>
+</head>
+<body>
+ <div id="app" class="app landing">
+
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo-text">
+                <span style="color: white;">h.</span><span class="company">company</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="chat-area" id="chatContainer">
+            <div class="message-row">
+                <div class="avatar ai">H</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="sender-name">Agente H.Egídio</span>
+                        <span class="timestamp">Agora</span>
+                    </div>
+                    <div class="bubble ai">Olá! Sou o Agente H.Egídio, seu assistente inteligente da H.company</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="suggestions" id="suggestions">
+                <div class="suggestion-chip" onclick="useSuggestion('Quem criou o grupo H.egídio?')">
+                    Quem criou o grupo H.egídio?
+                </div>
+                <div class="suggestion-chip" onclick="useSuggestion('Como se iniciou a equiplex?')">
+                    Como se iniciou a equiplex?
+                </div>
+                <div class="suggestion-chip" onclick="useSuggestion('O que é o Instituto Hebrom?')">
+                    O que é o Instituto Hebrom?
+                </div>
+                <div class="suggestion-chip" onclick="useSuggestion('Quem é Heribaldo Egídio? ')">
+                    Quem é Heribaldo Egídio? 
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="userInput" placeholder="Digite sua mensagem..." autocomplete="off">
+                </div>
+                <button id="sendBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+            <div class="footer-text">
+                O Agente H.Egídio pode cometer erros. Considere verificar informações importantes.
+            </div>
+        </div>
+    </div>
+    
+    </div>
+
+    <script>
+       
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const suggestionsDiv = document.getElementById('suggestions');
+        let app = document.getElementById("app")
+        
+
+      function ativarchat () {
+        if (app.classList.contains("landing")) {
+            app.classList.remove("landing")
+            app.classList.add("chat")
+        }
+      }
+
+     
+
+
+
+     userInput.addEventListener("focus", ativarchat)
+
+     userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" &&  userInput.value.trim()!== "") {
+            ativarchat()
+
+        }
+     })
+
+        // --- URL DO N8N ---
+        const N8N_WEBHOOK = "http://localhost:5678/webhook/pergunta-agente";
+
+        // --- GERAÇÃO DE SESSION ID ---
+        const sessionId = 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        console.log("Session ID gerado:", sessionId);
+
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function useSuggestion(text) {
+            userInput.value = text;
+            userInput.focus();
+            if(suggestionsDiv) suggestionsDiv.style.display = 'none';
+        }
+
+        // --- FUNÇÃO PRINCIPAL DE ENVIO ---
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (text === "") return;
+
+            
+            if(suggestionsDiv) suggestionsDiv.style.display = 'none';
+            addMessage(text, 'user');
+            userInput.value = '';
+            
+            
+            setTimeout(() => {
+                 
+                scrollToBottom();
+            }, 100);
+            
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+
+            const loadingId = addLoading();
+            scrollToBottom();
+
+            try {
+               // Envio para o N8N
+                /*const response = await fetch(N8N_WEBHOOK, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        message: text, 
+                        sessionId: sessionId 
+                    })
+                });*/
+
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                
+                let responseData = data;
+                if (Array.isArray(data) && data.length > 0) {
+                    responseData = data[0];
+                }
+
+                let paragraphs = [];
+
+                if (typeof responseData.response === 'string') {
+                    paragraphs = responseData.response.split('\n\n').filter(p => p.trim());
+                } else if (Array.isArray(responseData.response)) {
+                    paragraphs = responseData.response.filter(p => p.trim());
+                } else if (typeof responseData.output === 'string') {
+                    paragraphs = responseData.output.split('\n\n').filter(p => p.trim());
+                } else if (Array.isArray(responseData.output)) {
+                    paragraphs = responseData.output.filter(p => p.trim());
+                } else if (typeof responseData.message === 'string') {
+                    paragraphs = responseData.message.split('\n\n').filter(p => p.trim());
+                } else {
+                    paragraphs = ['Resposta recebida (formato desconhecido).'];
+                }
+
+                removeLoading(loadingId);
+
+                // 5. Animação dos Parágrafos
+                const bubbleElement = createAssistantBubble();
+
+                for (let i = 0; i < paragraphs.length; i++) {
+                    if (i > 0) {
+                        await sleep(1500);
+                        bubbleElement.innerHTML += '<br><br>'; 
+                    }
+
+                    const textNode = document.createTextNode(paragraphs[i]);
+                    bubbleElement.appendChild(textNode);
+                    
+                    scrollToBottom();
+                }
+
+            } catch (error) {
+                console.error('Erro ao buscar resposta:', error);
+                removeLoading(loadingId);
+                addMessage("Desculpe, ocorreu um erro ao processar sua pergunta. Por favor, tente novamente.", 'ai');
+            } finally {
+                userInput.disabled = false;
+                sendBtn.disabled = false;
+                userInput.focus();
+                scrollToBottom();
+            }
+        }
+
+       
+
+        function addMessage(text, sender) {
+            const row = document.createElement('div');
+            row.classList.add('message-row');
+            if (sender === 'user') row.classList.add('user');
+
+            const avatar = document.createElement('div');
+            avatar.classList.add('avatar', sender);
+            avatar.textContent = sender === 'user' ? 'V' : 'H';
+
+            const content = document.createElement('div');
+            content.classList.add('message-content');
+
+            const header = document.createElement('div');
+            header.classList.add('message-header');
+            header.innerHTML = `
+                <span class="sender-name">${sender === 'user' ? 'Você' : 'Agente H.Egídio'}</span>
+                <span class="timestamp">${getCurrentTime()}</span>
+            `;
+
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble', sender);
+            bubble.textContent = text;
+
+            content.appendChild(header);
+            content.appendChild(bubble);
+            row.appendChild(avatar);
+            row.appendChild(content);
+            chatContainer.appendChild(row);
+            
+            scrollToBottom();
+        }
+
+        function createAssistantBubble() {
+            const row = document.createElement('div');
+            row.classList.add('message-row');
+
+            const avatar = document.createElement('div');
+            avatar.classList.add('avatar', 'ai');
+            avatar.textContent = 'H';
+
+            const content = document.createElement('div');
+            content.classList.add('message-content');
+
+            const header = document.createElement('div');
+            header.classList.add('message-header');
+            header.innerHTML = `
+                <span class="sender-name">Agente H.Egídio</span>
+                <span class="timestamp">${getCurrentTime()}</span>
+            `;
+
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble', 'ai');
+            
+            content.appendChild(header);
+            content.appendChild(bubble);
+            row.appendChild(avatar);
+            row.appendChild(content);
+            chatContainer.appendChild(row);
+            
+            return bubble;
+        }
+
+        function addLoading() {
+            const id = 'loading-' + Date.now();
+            const row = document.createElement('div');
+            row.classList.add('message-row');
+            row.id = id;
+
+            const avatar = document.createElement('div');
+            avatar.classList.add('avatar', 'ai');
+            avatar.textContent = 'H';
+
+            const content = document.createElement('div');
+            content.classList.add('message-content');
+
+            const header = document.createElement('div');
+            header.classList.add('message-header');
+            header.innerHTML = `
+                <span class="sender-name">Agente H.Egídio</span>
+                <span class="timestamp">${getCurrentTime()}</span>
+            `;
+
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble', 'ai');
+            bubble.innerHTML = '<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+            content.appendChild(header);
+            content.appendChild(bubble);
+            row.appendChild(avatar);
+            row.appendChild(content);
+            chatContainer.appendChild(row);
+
+            return id;
+        }
+
+        function removeLoading(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+
+        userInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter" && !sendBtn.disabled) {
+                handleSend();
+            }
+        });
+
+      
+        userInput.focus();
+    </script>
+</div>
+</body>
+</html>
