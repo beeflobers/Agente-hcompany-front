@@ -98,11 +98,13 @@
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             justify-content: center;
             position: relative;
+            
+            
         }
 
         .chat-area {
            display: flex;
-            flex-direction: column;
+            flex-direction:column;
             gap: 20px;
             overflow-y: auto;
             max-height: 0;
@@ -112,6 +114,9 @@
             scrollbar-color: var(--accent-primary) transparent;
             margin-bottom: 10px;
             min-height: 0;
+            
+            
+            
         
            
             
@@ -129,16 +134,24 @@
             display: flex;
             gap: 12px;
             animation: slideIn 0.3s ease-out;
-            justify-content: center;
-            
+           flex-direction: row;
         }
+
+        
+
 
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .message-row.user { flex-direction: row-reverse; }
+        .message-row.user {flex-direction:row-reverse;
+           
+            
+            
+            
+            
+         }
 
         .avatar {
             width: 36px; 
@@ -154,7 +167,8 @@
 
         .avatar.user {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            
+            
         }
 
         .avatar.ai {
@@ -163,21 +177,24 @@
         }
 
         .message-content {
-            flex: 1;
-            max-width: 85%; /* Aumentei para caber mais texto */
+            
+            max-width: 85%;
+             /* Aumentei para caber mais texto */
         }
 
         .message-header {
             display: flex;
-            align-items: center;
             gap: 8px;
             margin-bottom: 4px;
+            align-items: flex-end;
         }
 
         .sender-name {
             font-size: 12px;
             font-weight: 600;
             color: var(--text-secondary);
+            
+           
         }
 
         .timestamp {
@@ -188,8 +205,8 @@
 
         .bubble {
             padding: 14px 18px;
-            border-radius: 12px;
-            line-height: 1.5;
+            border-radius: 18px;
+            line-height: 2.5;
             font-size: 15px;
             word-wrap: break-word;
             white-space: pre-wrap;
@@ -199,20 +216,20 @@
         .bubble.user {
             background: var(--user-msg);
             color: white;
-            border: 1px solid var(--border-color);
-            border-top-right-radius: 2px;
+            
+
         }
 
 
 
 
 
-        .bubble.ai {
+        /*.bubble.ai {
             background: var(--ai-msg);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
             border-top-left-radius: 2px;
-        }
+        }*/
 
         /* ÁREA DE INPUT */
         .input-container {
@@ -428,7 +445,7 @@
         </div>
     </div>
 
-    <div class="main-container">
+    <div  class="main-container">
         <div class="chat-area" id="chatContainer">
             <div class="message-row">
                 <div class="avatar ai">H</div>
@@ -485,12 +502,15 @@
         const sendBtn = document.getElementById('sendBtn');
         const suggestionsDiv = document.getElementById('suggestions');
         let app = document.getElementById("app")
+        let mensagem = document.querySelector(".message-row")
         
 
       function ativarchat () {
         if (app.classList.contains("landing")) {
             app.classList.remove("landing")
             app.classList.add("chat")
+            /*mensagem.style.justifyContent = "";
+            mensagem.style.flexDirection = "row";*/
         }
       }
 
