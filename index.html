@@ -91,7 +91,7 @@
             flex-direction: column;
             flex: 1;
             width: 100%;
-            max-width: 800px;
+            max-width: 1100px;
             height: calc(100vh - 60px);
             margin: 0 auto;
             padding: 20px;
@@ -107,7 +107,7 @@
             flex-direction:column;
             gap: 20px;
             overflow-y: auto;
-            max-height: 0;
+            max-height: 0px;
            opacity: 0;
             transition: all 0.5 ease;
             scrollbar-width: thin;
@@ -134,10 +134,19 @@
             display: flex;
             gap: 12px;
             animation: slideIn 0.3s ease-out;
-           flex-direction: row;
+            justify-content: center;
+            
         }
 
-        
+        .centro{
+            flex-direction: row;
+            justify-content: center;
+            display:flex;
+            text-align: center;
+            width: 100%;  
+        }
+
+
 
 
         @keyframes slideIn {
@@ -146,7 +155,7 @@
         }
 
         .message-row.user {flex-direction:row-reverse;
-           
+           justify-content: flex-start;
             
             
             
@@ -177,16 +186,26 @@
         }
 
         .message-content {
+           
+            font-size: 18px;
+            max-height: 95%;
             
-            max-width: 85%;
-             /* Aumentei para caber mais texto */
+           
+            
+
+       
+           
+            
+            
+            
         }
 
         .message-header {
             display: flex;
             gap: 8px;
-            margin-bottom: 4px;
-            align-items: flex-end;
+            margin-bottom: 8px;
+            
+            
         }
 
         .sender-name {
@@ -207,10 +226,11 @@
             padding: 14px 18px;
             border-radius: 18px;
             line-height: 2.5;
-            font-size: 15px;
+            font-size: 16px;
             word-wrap: break-word;
             white-space: pre-wrap;
             text-align: center;
+           
         }
 
         .bubble.user {
@@ -220,16 +240,22 @@
 
         }
 
+        h1{
+            margin-top: -10vh;
+            text-align: center;
+            font-size: x-large;
+        }
+
+    
 
 
 
 
-        /*.bubble.ai {
+        .bubble.ai {
             background: var(--ai-msg);
             color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            border-top-left-radius: 2px;
-        }*/
+            
+        }
 
         /* ÁREA DE INPUT */
         .input-container {
@@ -378,7 +404,7 @@
             opacity: 1;
             pointer-events: auto;
             overflow: visible;
-            margin-bottom: 80px;
+            margin-bottom: 50px;
         }
 
          .app.chat .chat-area{
@@ -393,7 +419,7 @@
 
        
         .app.chat .main-container {
-         justify-content: flex-start;
+         justify-content:flex-start;
          padding-top: 20px; 
          height: calc(100vh - 70px);
         }
@@ -401,7 +427,7 @@
       
       .app.landing .main-container {
         justify-content: flex-start;
-        padding-top: 25vh;
+        padding-top: 30vh;
         height: calc(100vh - 70px);
       }
 
@@ -450,11 +476,8 @@
             <div class="message-row">
                 <div class="avatar ai">H</div>
                 <div class="message-content">
-                    <div class="message-header">
-                        <span class="sender-name">Agente H.Egídio</span>
-                        <span class="timestamp">Agora</span>
-                    </div>
-                    <div class="bubble ai">Olá! Sou o Agente H.Egídio, seu assistente inteligente da H.company</div>
+                    <div class="message-header"></div>
+                    <h1> Sou o Agente H.Egídio, seu assistente inteligente da H.company</h1>  
                 </div>
             </div>
         </div>
@@ -502,18 +525,23 @@
         const sendBtn = document.getElementById('sendBtn');
         const suggestionsDiv = document.getElementById('suggestions');
         let app = document.getElementById("app")
-        let mensagem = document.querySelector(".message-row")
+        let mensagem = document.querySelector( ".message-row" )
         
 
       function ativarchat () {
         if (app.classList.contains("landing")) {
             app.classList.remove("landing")
             app.classList.add("chat")
-            /*mensagem.style.justifyContent = "";
-            mensagem.style.flexDirection = "row";*/
+            
+            if(mensagem.classList.contains("justifycontent-center")) {
+               mensagem.classList.remove("justifycontent-center")
+               mensagem.classList.add("centro")
+            }
         }
-      }
-
+        }
+            
+      
+      
     
 
      userInput.addEventListener("keydown", (e) => {
@@ -589,7 +617,7 @@
                     body: JSON.stringify({ 
                         message: text, 
                         sessionId: sessionId 
-                    })
+                    }) 
                 });*/
 
                 if (!response.ok) {
@@ -640,7 +668,22 @@
             } catch (error) {
                 console.error('Erro ao buscar resposta:', error);
                 removeLoading(loadingId);
-                addMessage("Desculpe, ocorreu um erro ao processar sua pergunta. Por favor, tente novamente.", 'ai');
+                addMessage(` Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+  nisi ut aliquip ex ea commodo consequat.   Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+  nisi ut aliquip ex ea commodo consequat.   Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+  nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+  nisi ut aliquip ex ea commodo consequat.  Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+  nisi ut aliquip ex ea commodo consequat. `, 'ai');
             } finally {
                 userInput.disabled = false;
                 sendBtn.disabled = false;
@@ -666,8 +709,7 @@
             const header = document.createElement('div');
             header.classList.add('message-header');
             header.innerHTML = `
-                <span class="sender-name">${sender === 'user' ? 'Você' : 'Agente H.Egídio'}</span>
-                <span class="timestamp">${getCurrentTime()}</span>
+                
             `;
 
             const bubble = document.createElement('div');
