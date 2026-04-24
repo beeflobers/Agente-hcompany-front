@@ -91,11 +91,11 @@
             flex-direction: column;
             flex: 1;
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
             height: calc(100vh - 60px);
             margin: 0 auto;
             padding: 20px;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s ease cubic-bezier(0.4, 0, 0.2, 1);
             justify-content: center;
             position: relative;
             
@@ -116,11 +116,6 @@
             min-height: 0;
             
             
-            
-        
-           
-            
-            
         }
         
         .chat-area::-webkit-scrollbar { width: 6px; }
@@ -132,17 +127,19 @@
         /* MENSAGENS */
         .message-row {
             display: flex;
-            gap: 12px;
             animation: slideIn 0.3s ease-out;
-            justify-content: center;
+            justify-content: left;
+           
+            
+           
+           
             
         }
 
         .centro{
             flex-direction: row;
-            justify-content: center;
-            display:flex;
             text-align: center;
+            display:flex;
             width: 100%;  
         }
 
@@ -167,7 +164,7 @@
             height: 36px;
             border-radius: 12px;
             display: none; 
-            align-items: center;
+            align-items: left;
             justify-content: center;
             font-weight: 600;
             font-size: 15px;
@@ -186,18 +183,10 @@
         }
 
         .message-content {
-           
-            font-size: 18px;
+           font-size: 18px;
             max-height: 95%;
-            
-           
-            
-
-       
-           
-            
-            
-            
+           align-items: flex-start;
+           display: flex;
         }
 
         .message-header {
@@ -225,11 +214,11 @@
         .bubble {
             padding: 14px 18px;
             border-radius: 18px;
-            line-height: 2.5;
+            line-height: 1.6;
             font-size: 16px;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-            text-align: center;
+            max-width: 800px;
+            text-align: left;
+           
            
         }
 
@@ -251,11 +240,11 @@
 
 
 
-        .bubble.ai {
+        /*.bubble.ai {
             background: var(--ai-msg);
             color: var(--text-primary);
             
-        }
+        }*/
 
         /* ÁREA DE INPUT */
         .input-container {
@@ -333,7 +322,7 @@
         button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* LOADING */
-        .loading-dots { display: flex; gap: 5px; align-items: center; }
+        .loading-dots { display: flex; gap: 5px; justify-content: flex-start; align-items:center;  }
         .dot {
             width: 6px; height: 6px; background: var(--accent-primary);
             border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both;
@@ -392,7 +381,7 @@
         
         .footer-text {
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             color: var(--accent-primary);
             margin-top: 8px;
             margin-bottom: 2px;
@@ -611,14 +600,14 @@
 
             try {
                // Envio para o N8N
-                /*const response = await fetch(N8N_WEBHOOK, {
+                const response = await fetch(N8N_WEBHOOK, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
                         message: text, 
                         sessionId: sessionId 
                     }) 
-                });*/
+                });
 
                 if (!response.ok) {
                     throw new Error(`Erro na requisição: ${response.status}`);
@@ -668,22 +657,7 @@
             } catch (error) {
                 console.error('Erro ao buscar resposta:', error);
                 removeLoading(loadingId);
-                addMessage(` Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-  nisi ut aliquip ex ea commodo consequat.   Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-  nisi ut aliquip ex ea commodo consequat.   Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-  nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-  nisi ut aliquip ex ea commodo consequat.  Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-  nisi ut aliquip ex ea commodo consequat. `, 'ai');
+                addMessage(` Desculpe, ocorreu um erro ao processar sua pergunta. Por favor, tente novamente.. `, 'ai');
             } finally {
                 userInput.disabled = false;
                 sendBtn.disabled = false;
@@ -731,17 +705,14 @@
 
             const avatar = document.createElement('div');
             avatar.classList.add('avatar', 'ai');
-            avatar.textContent = 'H';
+           
 
             const content = document.createElement('div');
             content.classList.add('message-content');
 
             const header = document.createElement('div');
             header.classList.add('message-header');
-            header.innerHTML = `
-                <span class="sender-name">Agente H.Egídio</span>
-                <span class="timestamp">${getCurrentTime()}</span>
-            `;
+            
 
             const bubble = document.createElement('div');
             bubble.classList.add('bubble', 'ai');
@@ -771,8 +742,6 @@
             const header = document.createElement('div');
             header.classList.add('message-header');
             header.innerHTML = `
-                <span class="sender-name">Agente H.Egídio</span>
-                <span class="timestamp">${getCurrentTime()}</span>
             `;
 
             const bubble = document.createElement('div');
