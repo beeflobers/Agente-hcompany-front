@@ -24,19 +24,38 @@
         }
 
         
-        body {
+         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 50%, #0a0e1a 100%);
             color: var(--text-primary);
-
             height: 100vh;
-            height: 100dvh;
+            overflow:hidden;
+            margin: 0;
+        }
+           
+          
+           
+
+           
+
+        .app {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
             position: relative;
-        }
+            width: 100%;
+           height: 100vh;
+            
+        } 
         
+        
+        
+
+
+
+
+
+
+
         /* Efeito de partículas animadas no fundo */
         body::before {
             content: '';
@@ -98,20 +117,33 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            box-sizing: border-box;
             width: 100%;
-            margin: 0 auto;
+            min-height: 0;
             padding: 10px 20px 20px 20px; 
             position: relative;
             z-index: 1;
-            overflow: hidden;
+            overflow-y: auto;
+            scroll-behavior: smooth;
             
         }
+
+        .main-container::-webkit-scrollbar { width: 6px; }
+        .main-container::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 10px;
+        }
+
+
+
+
+
+
+
 
 
          .chat-area {
             flex: 1;
-            overflow-y: auto;
             padding: 10px;
             display: flex;
             flex-direction: column;
@@ -119,12 +151,19 @@
             margin-bottom: 10px;
             min-height: 0;
             width: 100%;
-            scrollbar-width: none;
+            
+            
             
          }
-            
+
 
          
+ 
+        
+    
+
+
+       
 
     
         
@@ -203,7 +242,7 @@
             
         h1 {
            position: relative;
-           top: -35px;
+           top: -10px;
         }
 
 
@@ -256,30 +295,36 @@
         }*/
 
         /* ÁREA DE INPUT */
-        .input-container {
-            background: rgba(17, 24, 39, 0.9);
+       .input-container {
+        background: rgba(17, 24, 39, 0.9);
             backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 10px;
             border: 1px solid var(--border-color);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
             width: 100%;
             max-width: 900px;
-            margin-top: 20px;
             transition: all 0.5s ease;
             flex-shrink: 0;
             margin-left: auto;
             margin-right: auto;
-           margin-bottom: 20px;
+            margin-bottom: 55px;
+           
             
             
             
-        }
+          
+          
+
+    
+    }
 
         .input-area {
             display: flex;
             align-items: center;
             gap: 10px;
+            
            
            
         }
@@ -287,6 +332,8 @@
         .input-wrapper {
             flex: 1;
             position: relative;
+            
+
            
         }
 
@@ -302,6 +349,8 @@
             outline: none;
             transition: all 0.3s ease;
             font-family: 'Inter', sans-serif;
+            
+          
         }
 
         input:focus {
@@ -398,22 +447,22 @@
             opacity: 1;
             pointer-events: auto;
             overflow: visible;
-            margin-bottom: 50px;
-             
+            
             
         }
 
-         .app.chat .chat-area{
+          .app.chat .chat-area{
            display: flex;
            flex: 1; 
-           overflow-y: auto;
            opacity: 1;
            max-height: 100%;
            margin-bottom: 20px;
            width: 100%;
-          
+           max-width: 900px;
+           margin: 0 auto;
+           padding: 20px;
            
-
+          
          }
 
        
@@ -424,9 +473,8 @@
          width: 100%;
          margin: 0 auto;
          display: flex;
-         max-width: 900px;
-          
-         
+         overflow-y: auto;
+         flex: 1;
          
         }
 
@@ -435,8 +483,16 @@
         justify-content: flex-start;
         padding-top: 30vh;
         height: calc(100vh - 70px);
-         
       }
+
+      .app.landing .input-container {
+        margin-bottom: 33vh;
+      }
+
+
+
+
+
 
        
         @media (max-width: 600px) {
@@ -490,6 +546,7 @@
         <div class="message-header">
         <h1> Sou o Agente H.Egídio, seu assistente inteligente da H.company</h1>
         </div>
+        </div>
 
         
         <div class="input-container">
@@ -523,7 +580,7 @@
                 O Agente H.Egídio pode cometer erros. Considere verificar informações importantes.
             </div>
         </div>
-    </div>
+    
     
     </div>
 
@@ -545,10 +602,11 @@
         if(titulo){
             titulo.remove()
         }
-
       }            
       
       
+
+
     
 
      userInput.addEventListener("keydown", (e) => {
@@ -618,14 +676,14 @@
 
             try {
                // Envio para o N8N
-                const response = await fetch(N8N_WEBHOOK, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        message: text, 
-                        sessionId: sessionId 
-                    }) 
-                });
+                // const response = await fetch(N8N_WEBHOOK, {
+                //     method: "POST",
+                //     headers: { "Content-Type": "application/json" },
+                //     body: JSON.stringify({ 
+                //         message: text, 
+                //         sessionId: sessionId 
+                //     }) 
+                // });
 
                 if (!response.ok) {
                     throw new Error(`Erro na requisição: ${response.status}`);
